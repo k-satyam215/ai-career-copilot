@@ -1,0 +1,12 @@
+langchain
+langgraph
+sentence-transformers
+faiss-cpu
+pypdf
+gradio
+scikit-learn
+tiktoken
+pymupdf
+streamlit
+langchain-groq
+python-dotenv
