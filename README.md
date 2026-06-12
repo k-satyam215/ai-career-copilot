@@ -6,9 +6,12 @@
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)](api/main.py)
 [![MCP](https://img.shields.io/badge/tool--layer-MCP-7c3aed)](mcp_server/server.py)
 [![Docker](https://img.shields.io/badge/docker-compose-2496ED)](docker-compose.yml)
+[![Live Demo](https://img.shields.io/badge/demo-streamlit-FF4B4B)](https://ai-career-copilot-jeutufwmktd6pghwoqkvqo.streamlit.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **Not a ChatGPT wrapper.** An end-to-end agentic system that evaluates resumes against job descriptions using hybrid RAG, deterministic rule-based agents, LLM agents, a FastAPI service layer, an MCP tool layer, and a Streamlit UI — all wired together in a production-oriented pipeline.
+
+🚀 **[Live Demo → Try it here](https://ai-career-copilot-jeutufwmktd6pghwoqkvqo.streamlit.app)**
 
 ---
 
@@ -190,7 +193,7 @@ ai-career-copilot/
 ├── career_pipeline.py       # End-to-end pipeline orchestrator
 ├── role_detector.py         # JD + resume role inference
 ├── roles_config.py          # Skill domains and thresholds
-├── llm_provider.py          # Cached Groq LLM client
+├── llm_provider.py          # Groq LLM client
 ├── ui_streamlit.py          # Streamlit frontend
 ├── Dockerfile               # Multi-stage: api / ui / mcp
 ├── docker-compose.yml       # All services
