@@ -1,9 +1,4 @@
-"""Sentence-embedding utilities.
-
-The SentenceTransformer model is loaded lazily so that modules importing
-this file (and test collection) don't pay the model-download cost unless
-embeddings are actually used.
-"""
+"""Sentence-embedding utilities with Streamlit cache support."""
 
 _model = None
 
@@ -11,8 +6,18 @@ _model = None
 def get_model():
     global _model
     if _model is None:
-        from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
+        try:
+            import streamlit as st
+
+            @st.cache_resource(show_spinner=False)
+            def _load():
+                from sentence_transformers import SentenceTransformer
+                return SentenceTransformer("all-MiniLM-L6-v2")
+
+            _model = _load()
+        except Exception:
+            from sentence_transformers import SentenceTransformer
+            _model = SentenceTransformer("all-MiniLM-L6-v2")
     return _model
 
 
@@ -21,7 +26,6 @@ def embed(texts):
 
 
 def semantic_search(query, chunks, index=None, k=5):
-    """Return the top-k chunks most semantically similar to the query."""
     import numpy as np
 
     if not chunks:

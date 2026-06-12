@@ -71,8 +71,24 @@ if st.button("Evaluate Resume"):
         resume_path = f.name
 
     try:
-        with st.spinner("⏳ Analyzing your resume... (this may take 30-60 seconds)"):
-            result = evaluate_resume(resume_path, jd_text)
+        progress = st.progress(0, text="📄 Loading resume...")
+        progress.progress(10, text="🔍 Detecting role...")
+
+        from retrieval.loader import load_resume
+        from retrieval.chunking import chunk_resume
+        resume_text = load_resume(resume_path)
+        all_chunks = chunk_resume(resume_text)
+        progress.progress(25, text="🧠 Loading embedding model (first run may take ~30s)...")
+
+        # warm up model now so progress bar shows
+        from retrieval.embeddings import get_model
+        get_model()
+        progress.progress(50, text="🔎 Retrieving evidence chunks...")
+
+        progress.progress(65, text="🤖 Running agent pipeline...")
+        result = evaluate_resume(resume_path, jd_text)
+        progress.progress(100, text="✅ Done!")
+        progress.empty()
 
         st.subheader("🧠 Evaluation Result")
         st.write("**Detected Role Profile:**", result["role"])
@@ -103,6 +119,6 @@ if st.button("Evaluate Resume"):
         st.success(result["verdict"])
 
     except Exception as e:
-        st.error(f"❌ Error during evaluation: {e}")
-        with st.expander("Show full error details"):
+        st.error(f"❌ Error: {e}")
+        with st.expander("Show full traceback"):
             st.code(traceback.format_exc())
