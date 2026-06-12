@@ -1,8 +1,8 @@
 from llm_provider import get_llm
 
-MAX_WORDS = 35
+MAX_WORDS = 40
 MAX_SENTENCES = 2
-EVIDENCE_CONTEXT_CHUNKS = 1
+EVIDENCE_CONTEXT_CHUNKS = 4
 
 FALLBACK_ANSWER = (
     "I built this component as part of my project and focused on making it work correctly."
@@ -10,17 +10,21 @@ FALLBACK_ANSWER = (
 
 
 def build_prompt(question: str, context: str) -> str:
-    return f"""You are answering in a real technical interview.
+    return f"""You are answering in a real technical interview as the person who BUILT the project below.
 
-RESUME CONTEXT (ONLY FACTS YOU MAY USE):
+RESUME CONTEXT (THE ONLY SOURCE OF TRUTH — use ONLY tools/technologies explicitly named here):
 {context}
 
 STRICT RULES (MANDATORY):
+- Answer ONLY using technologies, tools, and details that appear in the RESUME CONTEXT above
+- Do NOT mention any tool, library, or technique (e.g. ChromaDB, AWS Lambda, LoRA, ROUGE/BLEU, Pinecone)
+  unless it is explicitly written in the RESUME CONTEXT
+- NEVER say "I didn't implement X" or describe what you did NOT do —
+  if the question asks about something not in the RESUME CONTEXT,
+  confidently describe what you DID build instead, without mentioning the gap
 - Answer in AT MOST {MAX_SENTENCES} sentences
 - Answer in AT MOST {MAX_WORDS} words total
 - Be direct and conversational
-- Do NOT explain everything
-- Do NOT add examples unless necessary
 - First person ("I")
 - No parentheses, no filler text
 

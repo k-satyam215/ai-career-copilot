@@ -1,8 +1,8 @@
 # AI Career Copilot 🧠
 
-[![CI](https://github.com/ksatyam/ai-career-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/ksatyam/ai-career-copilot/actions)
+[![CI](https://github.com/k-satyam215/ai-career-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/k-satyam215/ai-career-copilot/actions)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-100%2B%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-157%20passing-brightgreen)](tests/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)](api/main.py)
 [![MCP](https://img.shields.io/badge/tool--layer-MCP-7c3aed)](mcp_server/server.py)
 [![Docker](https://img.shields.io/badge/docker-compose-2496ED)](docker-compose.yml)
@@ -56,7 +56,7 @@ PDF Resume ──► loader ──► chunker
 ### 1. Clone and setup
 
 ```bash
-git clone https://github.com/ksatyam/ai-career-copilot
+git clone https://github.com/k-satyam215/ai-career-copilot
 cd ai-career-copilot
 cp .env.example .env
 # Edit .env and add your GROQ_API_KEY
@@ -110,7 +110,7 @@ docker compose up --build
 pytest --cov=. --cov-report=term-missing
 ```
 
-100+ tests covering:
+157 tests covering:
 - All deterministic agents (skill, experience, ATS, judge)
 - All LLM agents with mocked LLM (improvement, interview, answer)
 - Retrieval modules (chunking, HYDE, MMR, hybrid, retriever)
@@ -186,7 +186,7 @@ ai-career-copilot/
 │   └── main.py              # FastAPI app (/evaluate, /health)
 ├── mcp_server/
 │   └── server.py            # MCP tool layer (3 tools)
-├── tests/                   # 100+ pytest tests
+├── tests/                   # 157 pytest tests
 ├── career_pipeline.py       # End-to-end pipeline orchestrator
 ├── role_detector.py         # JD + resume role inference
 ├── roles_config.py          # Skill domains and thresholds
@@ -226,4 +226,4 @@ ai-career-copilot/
 
 ## 👤 Author
 
-**Satyam Kumar** — [LinkedIn](https://linkedin.com/in/satyam-kumar) · [GitHub](https://github.com/ksatyam)
+**Satyam Kumar** — [LinkedIn](https://linkedin.com/in/satyam-kumar) · [GitHub](https://github.com/k-satyam215)
