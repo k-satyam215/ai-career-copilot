@@ -1,15 +1,45 @@
+# Python
 __pycache__/
-*.pyc
-.venv/
-venv/
-.env
-.pytest_cache/
-.ruff_cache/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
 *.egg-info/
 dist/
 build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# Testing
+.pytest_cache/
 .coverage
 htmlcov/
-data/resumes/*.pdf
-!data/resumes/.gitkeep
-.streamlit/
+
+# Ruff
+.ruff_cache/
+
+# uv
+uv.lock
+
+# Data (user uploads, not committed)
+data/resumes/
+data/chunks/
+data/embeddings/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
