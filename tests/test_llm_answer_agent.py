@@ -7,9 +7,10 @@ from agents.llm_answer_agent import (
     FALLBACK_ANSWER,
     MAX_SENTENCES,
     MAX_WORDS,
-    build_prompt,
     enforce_constraints,
     llm_answer_agent,
+    get_relevant_chunks,
+    parse_batch_response,
 )
 
 
@@ -23,18 +24,20 @@ def _make_mock_llm(text):
 
 GOOD_ANSWER = "I built the retrieval component using FAISS and LangChain for document search."
 
+BATCH_RESPONSE = """A1. I used LangGraph and FastAPI to build the pipeline with retry loops.
+A2. The retry loop triggers on test failure and has a max of 3 cycles."""
+
 
 # ---- enforce_constraints ---------------------------------------------------
 
 def test_enforce_short_answer_passes():
     result = enforce_constraints(GOOD_ANSWER)
-    assert len(result.split()) <= MAX_WORDS + 2  # small tolerance for period
+    assert len(result.split()) <= MAX_WORDS + 2
 
 
 def test_enforce_trims_to_max_sentences():
-    long = "Sentence one. Sentence two here. Sentence three here too. Sentence four also."
+    long = "Sentence one. Sentence two here. Sentence three here too. Sentence four also. Sentence five."
     result = enforce_constraints(long)
-    # should be max 2 sentences
     assert result.count(".") <= MAX_SENTENCES + 1
 
 
@@ -48,22 +51,38 @@ def test_enforce_empty_string():
     assert result == "."
 
 
-# ---- build_prompt ----------------------------------------------------------
+# ---- get_relevant_chunks ---------------------------------------------------
 
-def test_build_prompt_contains_question():
-    p = build_prompt("How did you build the RAG system?", "context text here")
-    assert "How did you build the RAG system?" in p
+def test_get_relevant_chunks_returns_top_k():
+    chunks = ["LangGraph retry loop", "FastAPI endpoint", "unrelated content here", "LangGraph agent graph"]
+    result = get_relevant_chunks("LangGraph retry", chunks, top_k=2)
+    assert len(result) == 2
 
 
-def test_build_prompt_contains_context():
-    p = build_prompt("question?", "LangChain and FAISS usage details")
-    assert "LangChain and FAISS" in p
+def test_get_relevant_chunks_empty():
+    result = get_relevant_chunks("anything", [], top_k=3)
+    assert result == []
+
+
+# ---- parse_batch_response --------------------------------------------------
+
+def test_parse_batch_response_parses_correctly():
+    answers = parse_batch_response(BATCH_RESPONSE, 2)
+    assert len(answers) == 2
+    assert "LangGraph" in answers[0]
+
+
+def test_parse_batch_response_fallback_on_missing():
+    answers = parse_batch_response("A1. Only one answer here.", 3)
+    assert len(answers) == 3
+    assert answers[1] == FALLBACK_ANSWER
+    assert answers[2] == FALLBACK_ANSWER
 
 
 # ---- agent integration -----------------------------------------------------
 
 def test_agent_returns_answers(state_with_questions):
-    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(GOOD_ANSWER)):
+    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(BATCH_RESPONSE)):
         result = llm_answer_agent(state_with_questions)
     assert "interview_answers" in result
     assert len(result["interview_answers"]) == len(state_with_questions["interview_questions"])
@@ -79,7 +98,7 @@ def test_agent_uses_fallback_on_llm_error(state_with_questions):
 
 def test_agent_empty_questions(base_state):
     base_state["interview_questions"] = []
-    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(GOOD_ANSWER)):
+    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(BATCH_RESPONSE)):
         result = llm_answer_agent(base_state)
     assert result["interview_answers"] == []
 
@@ -87,12 +106,14 @@ def test_agent_empty_questions(base_state):
 def test_agent_empty_evidence(base_state):
     base_state["interview_questions"] = ["How did you implement the system?"]
     base_state["evidence_chunks"] = []
-    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(GOOD_ANSWER)):
+    base_state["resume_chunks"] = ["Some resume content about LangGraph and FastAPI."]
+    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(BATCH_RESPONSE)):
         result = llm_answer_agent(base_state)
-    assert result["interview_answers"] == []
+    assert "interview_answers" in result
+    assert len(result["interview_answers"]) == 1
 
 
 def test_agent_state_returned(state_with_questions):
-    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(GOOD_ANSWER)):
+    with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(BATCH_RESPONSE)):
         result = llm_answer_agent(state_with_questions)
     assert result is state_with_questions
