@@ -1,8 +1,6 @@
 """Tests for llm_answer_agent (LLM mocked)."""
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from agents.llm_answer_agent import (
     FALLBACK_ANSWER,
     MAX_SENTENCES,
@@ -28,8 +26,6 @@ BATCH_RESPONSE = """A1. I used LangGraph and FastAPI to build the pipeline with 
 A2. The retry loop triggers on test failure and has a max of 3 cycles."""
 
 
-# ---- enforce_constraints ---------------------------------------------------
-
 def test_enforce_short_answer_passes():
     result = enforce_constraints(GOOD_ANSWER)
     assert len(result.split()) <= MAX_WORDS + 2
@@ -52,8 +48,6 @@ def test_enforce_empty_string():
     assert result == "."
 
 
-# ---- get_relevant_chunks ---------------------------------------------------
-
 def test_get_relevant_chunks_returns_top_k():
     chunks = ["LangGraph retry loop", "FastAPI endpoint", "unrelated content here", "LangGraph agent graph"]
     result = get_relevant_chunks("LangGraph retry", chunks, top_k=2)
@@ -70,8 +64,6 @@ def test_get_relevant_chunks_scores_by_overlap():
     result = get_relevant_chunks("LangGraph retry loop", chunks, top_k=1)
     assert result[0] == "LangGraph retry loop agent"
 
-
-# ---- parse_batch_response --------------------------------------------------
 
 def test_parse_batch_response_parses_correctly():
     answers = parse_batch_response(BATCH_RESPONSE, 2)
@@ -91,8 +83,6 @@ def test_parse_batch_response_single():
     assert len(answers) == 1
     assert "FastAPI" in answers[0]
 
-
-# ---- agent integration -----------------------------------------------------
 
 def test_agent_returns_answers(state_with_questions):
     with patch("agents.llm_answer_agent.get_llm", return_value=_make_mock_llm(BATCH_RESPONSE)):

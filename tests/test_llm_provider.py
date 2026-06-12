@@ -32,10 +32,9 @@ def test_get_llm_returns_chagroq_instance():
     reset_llm_cache()
     mock_groq = MagicMock()
     with patch.dict(os.environ, {"GROQ_API_KEY": "test-key"}):
-        with patch("llm_provider.ChatGroq", return_value=mock_groq) as mock_cls:
+        with patch("llm_provider.ChatGroq", return_value=mock_groq):
             result1 = get_llm()
             result2 = get_llm()
-            # Both calls return a ChatGroq instance
             assert result1 is mock_groq
             assert result2 is mock_groq
     reset_llm_cache()
