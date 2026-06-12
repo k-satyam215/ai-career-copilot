@@ -2,7 +2,7 @@ from llm_provider import get_llm
 
 MAX_WORDS = 40
 MAX_SENTENCES = 2
-EVIDENCE_CONTEXT_CHUNKS = 4
+EVIDENCE_CONTEXT_CHUNKS = 8  # increased from 4
 
 FALLBACK_ANSWER = (
     "I built this component as part of my project and focused on making it work correctly."
@@ -17,15 +17,13 @@ RESUME CONTEXT (THE ONLY SOURCE OF TRUTH — use ONLY tools/technologies explici
 
 STRICT RULES (MANDATORY):
 - Answer ONLY using technologies, tools, and details that appear in the RESUME CONTEXT above
-- Do NOT mention any tool, library, or technique (e.g. ChromaDB, AWS Lambda, LoRA, ROUGE/BLEU, Pinecone)
-  unless it is explicitly written in the RESUME CONTEXT
+- Do NOT mention any tool, library, or technique unless it is explicitly written in the RESUME CONTEXT
 - NEVER say "I didn't implement X" or describe what you did NOT do —
   if the question asks about something not in the RESUME CONTEXT,
   confidently describe what you DID build instead, without mentioning the gap
 - Answer in AT MOST {MAX_SENTENCES} sentences
 - Answer in AT MOST {MAX_WORDS} words total
-- Be direct and conversational
-- First person ("I")
+- Be direct and conversational, first person ("I")
 - No parentheses, no filler text
 
 Question:
@@ -35,8 +33,19 @@ Answer:
 """
 
 
+def get_relevant_chunks(question: str, all_chunks: list, top_k: int = 6) -> list:
+    """Return chunks most relevant to this specific question using keyword overlap."""
+    q_words = set(question.lower().split())
+    scored = []
+    for chunk in all_chunks:
+        chunk_words = set(chunk.lower().split())
+        score = len(q_words & chunk_words)
+        scored.append((score, chunk))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [c for _, c in scored[:top_k]]
+
+
 def enforce_constraints(raw_text: str) -> str:
-    """Trim model output to the sentence/word limits, raising on generic filler."""
     sentences = [s.strip() for s in raw_text.replace("\n", " ").split(".") if s.strip()]
     sentences = sentences[:MAX_SENTENCES]
 
@@ -59,17 +68,23 @@ def enforce_constraints(raw_text: str) -> str:
 def llm_answer_agent(state):
     """Generates concise, fresher-safe interview answers grounded in resume evidence."""
     questions = state.get("interview_questions", [])
+    all_chunks = state.get("full_resume_chunks") or state.get("resume_chunks", [])
     evidence = state.get("evidence_chunks", [])
 
-    if not questions or not evidence:
+    if not questions:
         state["interview_answers"] = []
         return state
 
-    context = "\n".join(evidence[:EVIDENCE_CONTEXT_CHUNKS])
     llm = get_llm()
-
     answers = []
+
     for question in questions:
+        # get question-specific relevant chunks for better grounding
+        relevant = get_relevant_chunks(question, all_chunks, top_k=6)
+        # also include top evidence chunks for general context
+        combined = relevant + [c for c in evidence[:4] if c not in relevant]
+        context = "\n\n".join(combined[:EVIDENCE_CONTEXT_CHUNKS])
+
         try:
             response = llm.invoke(build_prompt(question, context))
             answer = enforce_constraints(response.content.strip())
