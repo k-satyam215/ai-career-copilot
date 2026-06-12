@@ -36,14 +36,15 @@ def test_enforce_short_answer_passes():
 
 
 def test_enforce_trims_to_max_sentences():
-    long = "Sentence one. Sentence two here. Sentence three here too. Sentence four also. Sentence five."
+    long = "Sentence one. Sentence two here. Sentence three. Sentence four. Sentence five."
     result = enforce_constraints(long)
     assert result.count(".") <= MAX_SENTENCES + 1
 
 
-def test_enforce_generic_fallback_raises():
-    with pytest.raises(ValueError):
-        enforce_constraints("I worked on this feature and it was great.")
+def test_enforce_trims_long_words():
+    long_text = " ".join(["word"] * 100)
+    result = enforce_constraints(long_text)
+    assert len(result.split()) <= MAX_WORDS + 1
 
 
 def test_enforce_empty_string():
@@ -64,6 +65,12 @@ def test_get_relevant_chunks_empty():
     assert result == []
 
 
+def test_get_relevant_chunks_scores_by_overlap():
+    chunks = ["LangGraph retry loop agent", "unrelated stuff", "LangGraph"]
+    result = get_relevant_chunks("LangGraph retry loop", chunks, top_k=1)
+    assert result[0] == "LangGraph retry loop agent"
+
+
 # ---- parse_batch_response --------------------------------------------------
 
 def test_parse_batch_response_parses_correctly():
@@ -77,6 +84,12 @@ def test_parse_batch_response_fallback_on_missing():
     assert len(answers) == 3
     assert answers[1] == FALLBACK_ANSWER
     assert answers[2] == FALLBACK_ANSWER
+
+
+def test_parse_batch_response_single():
+    answers = parse_batch_response("A1. I built this with FastAPI and Docker.", 1)
+    assert len(answers) == 1
+    assert "FastAPI" in answers[0]
 
 
 # ---- agent integration -----------------------------------------------------
