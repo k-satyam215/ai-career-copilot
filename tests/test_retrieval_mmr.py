@@ -1,8 +1,7 @@
 """Tests for retrieval.mmr and retrieval.retriever (model mocked)."""
-import pytest
-import numpy as np
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
+import numpy as np
 
 # ---- MMR tests -------------------------------------------------------------
 

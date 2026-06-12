@@ -6,7 +6,7 @@ as MCP tools so external agents/LLM hosts can drive the pipeline.
 
 from mcp.server.fastmcp import FastMCP
 
-from career_pipeline import evaluate_resume, _extract_retrieval_keywords
+from career_pipeline import _extract_retrieval_keywords, evaluate_resume
 from retrieval.chunking import chunk_resume
 from retrieval.loader import load_resume
 from retrieval.retriever import retrieve_evidence

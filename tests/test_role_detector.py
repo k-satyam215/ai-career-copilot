@@ -1,8 +1,6 @@
 """Tests for role_detector and roles_config."""
-import pytest
 from role_detector import detect_role_from_jd, detect_role_from_resume
-from roles_config import SKILL_DOMAINS, EVALUATION_THRESHOLDS, ROLE_CONFIG
-
+from roles_config import EVALUATION_THRESHOLDS, ROLE_CONFIG, SKILL_DOMAINS
 
 # ---- detect_role_from_jd ---------------------------------------------------
 

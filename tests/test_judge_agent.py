@@ -1,5 +1,4 @@
 """Tests for judge_agent."""
-import pytest
 from agents.judge_agent import judge_agent
 from roles_config import EVALUATION_THRESHOLDS
 

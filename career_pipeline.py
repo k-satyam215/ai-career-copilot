@@ -1,19 +1,17 @@
-from retrieval.loader import load_resume
-from retrieval.chunking import chunk_resume
-from retrieval.retriever import retrieve_evidence
-
-from role_detector import detect_role_from_jd, detect_role_from_resume
-from roles_config import SKILL_DOMAINS, EVALUATION_THRESHOLDS
-
 from agents import (
-    skill_agent,
-    experience_agent,
     ats_agent,
+    experience_agent,
     improvement_agent,
-    llm_interview_agent,
-    llm_answer_agent,
     judge_agent,
+    llm_answer_agent,
+    llm_interview_agent,
+    skill_agent,
 )
+from retrieval.chunking import chunk_resume
+from retrieval.loader import load_resume
+from retrieval.retriever import retrieve_evidence
+from role_detector import detect_role_from_jd, detect_role_from_resume
+from roles_config import EVALUATION_THRESHOLDS, SKILL_DOMAINS
 
 AGENT_PIPELINE = [
     skill_agent,

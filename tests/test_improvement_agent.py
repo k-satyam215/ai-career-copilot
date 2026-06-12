@@ -1,13 +1,12 @@
 """Tests for improvement_agent (LLM mocked)."""
-import pytest
 from unittest.mock import MagicMock, patch
+
 from agents.improvement_agent import (
+    build_prompt,
     improvement_agent,
     is_eligible_line,
-    build_prompt,
     is_valid_bullet,
 )
-
 
 # ---- Pure function tests ---------------------------------------------------
 

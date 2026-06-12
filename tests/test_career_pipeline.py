@@ -1,13 +1,12 @@
 """Tests for career_pipeline module."""
-import pytest
-from unittest.mock import patch, MagicMock
-from career_pipeline import (
-    format_role_label,
-    _extract_retrieval_keywords,
-    run_agent_pipeline,
-    evaluate_resume,
-)
+from unittest.mock import MagicMock, patch
 
+from career_pipeline import (
+    _extract_retrieval_keywords,
+    evaluate_resume,
+    format_role_label,
+    run_agent_pipeline,
+)
 
 # ---- format_role_label -----------------------------------------------------
 

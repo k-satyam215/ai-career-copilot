@@ -1,9 +1,7 @@
 """Tests for retrieval modules: chunking, hyde, hybrid."""
-import pytest
-from retrieval.chunking import chunk_resume, CHUNK_SIZE
+from retrieval.chunking import CHUNK_SIZE, chunk_resume
+from retrieval.hybrid import enhance_query, keyword_search
 from retrieval.hyde import generate_hypothetical_profile
-from retrieval.hybrid import keyword_search, enhance_query
-
 
 # ---- chunking.py -----------------------------------------------------------
 

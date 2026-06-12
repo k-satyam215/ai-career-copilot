@@ -1,12 +1,12 @@
 """Tests for llm_interview_agent (LLM mocked)."""
-import pytest
 from unittest.mock import MagicMock, patch
+
 from agents.llm_interview_agent import (
+    NUM_QUESTIONS,
+    build_prompt,
+    fill_with_fallback,
     llm_interview_agent,
     parse_questions,
-    fill_with_fallback,
-    build_prompt,
-    NUM_QUESTIONS,
 )
 
 

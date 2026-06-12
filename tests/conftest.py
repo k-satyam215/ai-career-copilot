@@ -1,6 +1,7 @@
 """Shared fixtures and mocks for the test suite."""
 import sys
 import types
+
 import numpy as np
 import pytest
 

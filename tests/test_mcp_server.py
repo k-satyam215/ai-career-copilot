@@ -1,7 +1,5 @@
 """Tests for MCP server tools."""
-import pytest
-from unittest.mock import patch, MagicMock
-
+from unittest.mock import patch
 
 MOCK_CHUNKS = [
     "Built a RAG pipeline using LangChain and FAISS for document retrieval",

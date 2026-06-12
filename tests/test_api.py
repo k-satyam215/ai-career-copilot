@@ -1,8 +1,8 @@
 """Tests for FastAPI endpoints."""
-import pytest
 import io
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
+import pytest
 
 MOCK_RESULT = {
     "role": "GenAI Engineer",
@@ -19,6 +19,7 @@ MOCK_RESULT = {
 @pytest.fixture
 def client():
     from fastapi.testclient import TestClient
+
     from api.main import app
     return TestClient(app)
 

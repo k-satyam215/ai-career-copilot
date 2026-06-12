@@ -1,5 +1,4 @@
 """Tests for agents state schema."""
-import pytest
 from agents.state import AgentState
 
 

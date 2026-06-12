@@ -1,7 +1,8 @@
 """Tests for llm_provider."""
-import pytest
-from unittest.mock import patch, MagicMock
 import os
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 
 def test_get_llm_raises_without_key():

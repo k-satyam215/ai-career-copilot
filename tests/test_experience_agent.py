@@ -1,10 +1,9 @@
 """Tests for experience_agent."""
-import pytest
 from agents.experience_agent import (
-    experience_agent,
     EXPERIENCE_INDICATORS,
-    POINTS_PER_INDICATOR,
     MAX_EXPERIENCE_SCORE,
+    POINTS_PER_INDICATOR,
+    experience_agent,
 )
 
 

@@ -1,13 +1,15 @@
 """Tests for llm_answer_agent (LLM mocked)."""
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
+
 from agents.llm_answer_agent import (
-    llm_answer_agent,
+    FALLBACK_ANSWER,
+    MAX_SENTENCES,
+    MAX_WORDS,
     build_prompt,
     enforce_constraints,
-    FALLBACK_ANSWER,
-    MAX_WORDS,
-    MAX_SENTENCES,
+    llm_answer_agent,
 )
 
 
@@ -37,7 +39,6 @@ def test_enforce_trims_to_max_sentences():
 
 
 def test_enforce_generic_fallback_raises():
-    import pytest
     with pytest.raises(ValueError):
         enforce_constraints("I worked on this feature and it was great.")
 

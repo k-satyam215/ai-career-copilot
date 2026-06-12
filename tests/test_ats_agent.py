@@ -1,6 +1,5 @@
 """Tests for ats_agent."""
-import pytest
-from agents.ats_agent import ats_agent, MIN_WORD_COUNT, SOFT_WARNING_UPPER_BOUND
+from agents.ats_agent import ats_agent
 
 
 def make_state(text):
