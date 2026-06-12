@@ -1,0 +1,4 @@
+Looking for an AI / GenAI engineer with experience in LLMs, RAG,
+LangChain, prompt engineering, vector databases, agents,
+and generative AI systems. Experience with FastAPI, Docker,
+and CI/CD pipelines is a plus.

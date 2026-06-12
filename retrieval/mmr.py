@@ -1,38 +1,48 @@
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from retrieval.embeddings import get_model
 
-def normalize(v):
-    return v / np.linalg.norm(v)
+DEFAULT_TOP_K = 8
+DEFAULT_LAMBDA = 0.7
 
-def mmr(query, docs, top_k=8, lambda_param=0.7):
+
+def normalize(vector: np.ndarray) -> np.ndarray:
+    norm = np.linalg.norm(vector)
+    if norm == 0:
+        return vector
+    return vector / norm
+
+
+def mmr(query: str, docs: list, top_k: int = DEFAULT_TOP_K, lambda_param: float = DEFAULT_LAMBDA) -> list:
+    """Maximal Marginal Relevance selection for diversity-aware evidence retrieval."""
     if not docs:
         return []
 
-    q_emb = normalize(model.encode([query])[0])
-    d_embs = np.array([normalize(e) for e in model.encode(docs)])
+    model = get_model()
+    query_emb = normalize(model.encode([query])[0])
+    doc_embs = np.array([normalize(e) for e in model.encode(docs)])
 
-    selected, selected_embs = [], []
+    selected_indices: list = []
+    selected_embs: list = []
 
     for _ in range(min(top_k, len(docs))):
-        scores = []
+        best_score = None
+        best_index = None
 
-        for i, emb in enumerate(d_embs):
-            if i in selected:
+        for i, emb in enumerate(doc_embs):
+            if i in selected_indices:
                 continue
 
-            sim_q = np.dot(emb, q_emb)
-            sim_sel = max(
-                [np.dot(emb, s) for s in selected_embs],
-                default=0
-            )
+            relevance = float(np.dot(emb, query_emb))
+            redundancy = max((float(np.dot(emb, s)) for s in selected_embs), default=0.0)
 
-            score = lambda_param * sim_q - (1 - lambda_param) * sim_sel
-            scores.append((score, i))
+            score = lambda_param * relevance - (1 - lambda_param) * redundancy
 
-        _, best = max(scores)
-        selected.append(best)
-        selected_embs.append(d_embs[best])
+            if best_score is None or score > best_score:
+                best_score = score
+                best_index = i
 
-    return [docs[i] for i in selected]
+        selected_indices.append(best_index)
+        selected_embs.append(doc_embs[best_index])
+
+    return [docs[i] for i in selected_indices]

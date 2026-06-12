@@ -1,40 +1,32 @@
-# agents/improvement_agent.py
-
 from llm_provider import get_llm
 
+FOCUS_KEYWORDS = [
+    "project", "system", "pipeline", "built", "implement", "design",
+    "develop", "architecture", "module", "api", "application",
+]
+MIN_LINE_WORDS = 7
+MIN_BULLET_WORDS = 8
+MAX_SUGGESTIONS = 3
+JD_CONTEXT_CHARS = 300
 
-def improvement_agent(state):
-    """
-    Generates resume-ready improvement bullets
-    (NOT instructions, actual rewritten bullets)
-    """
 
-    resume_chunks = state.get("resume_chunks", [])
-    jd_text = state.get("jd_text", "")
-    llm = get_llm()
+def is_eligible_line(text: str) -> bool:
+    """A resume line is eligible for rewriting if it's substantial and
+    references project/system-building work."""
+    words = text.split()
+    if len(words) < MIN_LINE_WORDS:
+        return False
+    return any(keyword in text.lower() for keyword in FOCUS_KEYWORDS)
 
-    suggestions = []
 
-    for chunk in resume_chunks:
-        text = chunk.strip()
-
-        # Skip very short or broken lines
-        if len(text.split()) < 8:
-            continue
-
-        # Focus only on project / system lines
-        keywords = ["project", "system", "pipeline", "built", "implemented", "designed"]
-        if not any(k in text.lower() for k in keywords):
-            continue
-
-        prompt = f"""
-You are helping improve a FRESHER's resume.
+def build_prompt(resume_line: str, jd_text: str) -> str:
+    return f"""You are helping improve a FRESHER's resume.
 
 ORIGINAL RESUME LINE:
-{text}
+{resume_line}
 
 JOB DESCRIPTION CONTEXT:
-{jd_text[:300]}
+{jd_text[:JD_CONTEXT_CHARS]}
 
 TASK:
 Rewrite this line as a STRONG resume bullet.
@@ -50,22 +42,38 @@ RULES:
 Improved Resume Bullet:
 """
 
+
+def is_valid_bullet(bullet: str) -> bool:
+    if len(bullet.split()) < MIN_BULLET_WORDS:
+        return False
+    lowered = bullet.lower()
+    return "add" not in lowered and "should" not in lowered
+
+
+def improvement_agent(state):
+    """Generates resume-ready improvement bullets (not instructions)."""
+    resume_chunks = state.get("resume_chunks", [])
+    jd_text = state.get("jd_text", "")
+    llm = get_llm()
+
+    suggestions = []
+
+    for chunk in resume_chunks:
+        text = chunk.strip()
+
+        if not is_eligible_line(text):
+            continue
+
         try:
-            resp = llm.invoke(prompt)
-            bullet = resp.content.strip()
-
-            # Safety filters
-            if len(bullet.split()) < 8:
-                continue
-            if "add" in bullet.lower() or "should" in bullet.lower():
-                continue
-
-            suggestions.append(bullet)
-
+            response = llm.invoke(build_prompt(text, jd_text))
+            bullet = response.content.strip()
         except Exception:
             continue
 
-        if len(suggestions) >= 3:
+        if is_valid_bullet(bullet):
+            suggestions.append(bullet)
+
+        if len(suggestions) >= MAX_SUGGESTIONS:
             break
 
     state["improvement_suggestions"] = suggestions
