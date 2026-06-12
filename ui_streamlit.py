@@ -1,4 +1,5 @@
 import tempfile
+import traceback
 
 import streamlit as st
 
@@ -69,32 +70,39 @@ if st.button("Evaluate Resume"):
         f.write(uploaded_file.read())
         resume_path = f.name
 
-    result = evaluate_resume(resume_path, jd_text)
+    try:
+        with st.spinner("⏳ Analyzing your resume... (this may take 30-60 seconds)"):
+            result = evaluate_resume(resume_path, jd_text)
 
-    st.subheader("🧠 Evaluation Result")
-    st.write("**Detected Role Profile:**", result["role"])
+        st.subheader("🧠 Evaluation Result")
+        st.write("**Detected Role Profile:**", result["role"])
 
-    c1, c2 = st.columns(2)
-    c1.metric("Skill Score", result["skill_score"])
-    c2.metric("Experience Score", result["experience_score"])
+        c1, c2 = st.columns(2)
+        c1.metric("Skill Score", result["skill_score"])
+        c2.metric("Experience Score", result["experience_score"])
 
-    st.subheader("📄 ATS Check")
-    if result["ats_issues"]:
-        for issue in result["ats_issues"]:
-            st.warning(issue)
-    else:
-        st.success("No ATS issues found")
+        st.subheader("📄 ATS Check")
+        if result["ats_issues"]:
+            for issue in result["ats_issues"]:
+                st.warning(issue)
+        else:
+            st.success("No ATS issues found")
 
-    st.subheader("✍️ Resume Improvement Suggestions")
-    for suggestion in result["improvement_suggestions"]:
-        st.info(suggestion)
+        st.subheader("✍️ Resume Improvement Suggestions")
+        for suggestion in result["improvement_suggestions"]:
+            st.info(suggestion)
 
-    st.subheader("🎯 Interview Questions & Answers")
-    for i, (question, answer) in enumerate(
-        zip(result["interview_questions"], result["interview_answers"]), 1
-    ):
-        st.markdown(f"**Q{i}. {question}**")
-        st.markdown(f"🗣️ {answer}")
+        st.subheader("🎯 Interview Questions & Answers")
+        for i, (question, answer) in enumerate(
+            zip(result["interview_questions"], result["interview_answers"]), 1
+        ):
+            st.markdown(f"**Q{i}. {question}**")
+            st.markdown(f"🗣️ {answer}")
 
-    st.subheader("✅ Final Verdict")
-    st.success(result["verdict"])
+        st.subheader("✅ Final Verdict")
+        st.success(result["verdict"])
+
+    except Exception as e:
+        st.error(f"❌ Error during evaluation: {e}")
+        with st.expander("Show full error details"):
+            st.code(traceback.format_exc())
