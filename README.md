@@ -229,4 +229,4 @@ ai-career-copilot/
 
 ## 👤 Author
 
-**Satyam Kumar** — [LinkedIn](https://linkedin.com/in/satyam-kumar) · [GitHub](https://github.com/k-satyam215)
+**Satyam Kumar** — [LinkedIn](https://www.linkedin.com/in/satyam-kumar-266b38254) · [GitHub](https://github.com/k-satyam215)
