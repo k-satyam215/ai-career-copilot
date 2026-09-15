@@ -1,4 +1,5 @@
 """Shared fixtures and mocks for the test suite."""
+import importlib.machinery
 import sys
 import types
 
@@ -9,9 +10,24 @@ import pytest
 # Stub heavy optional dependencies BEFORE any app module imports them
 # ---------------------------------------------------------------------------
 
+def _make_module_stub(name: str) -> types.ModuleType:
+    """Create a bare module stub with a real (loader=None) ModuleSpec.
+
+    A plain ``types.ModuleType(name)`` leaves ``__spec__`` as ``None``,
+    which is structurally invalid: Python's import machinery (and tools
+    that introspect it, e.g. coverage/pytest-cov during collection) can
+    raise ``ValueError: <name>.__spec__ is None`` when it encounters a
+    sys.modules entry with no spec at all. Giving the stub a minimal but
+    real ModuleSpec keeps it a valid module object.
+    """
+    module = types.ModuleType(name)
+    module.__spec__ = importlib.machinery.ModuleSpec(name, loader=None)
+    return module
+
+
 def _make_sentence_transformers_stub():
     """Return a minimal sentence_transformers stub."""
-    st = types.ModuleType("sentence_transformers")
+    st = _make_module_stub("sentence_transformers")
 
     class FakeSentenceTransformer:
         def __init__(self, *args, **kwargs):
@@ -30,8 +46,7 @@ if "sentence_transformers" not in sys.modules:
     sys.modules["sentence_transformers"] = _make_sentence_transformers_stub()
 
 if "faiss" not in sys.modules:
-    faiss_stub = types.ModuleType("faiss")
-    sys.modules["faiss"] = faiss_stub
+    sys.modules["faiss"] = _make_module_stub("faiss")
 
 # ---------------------------------------------------------------------------
 # Common state fixtures
