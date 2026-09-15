@@ -1,5 +1,10 @@
 """Tests for skill_agent."""
-from agents.skill_agent import MAX_SKILL_SCORE, POINTS_PER_GROUP, SKILL_GROUPS, skill_agent
+from agents.skill_agent import (
+    MAX_SKILL_SCORE,
+    POINTS_PER_GROUP,
+    SKILL_GROUPS,
+    skill_agent,
+)
 
 
 def make_state(text):

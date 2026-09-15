@@ -67,7 +67,7 @@ def improvement_agent(state):
         try:
             response = llm.invoke(build_prompt(text, jd_text))
             bullet = response.content.strip()
-        except Exception:
+        except Exception:  # noqa: BLE001, S112
             continue
 
         if is_valid_bullet(bullet):

@@ -77,12 +77,12 @@ def test_thresholds_are_numeric():
 
 def test_role_config_backward_compat():
     assert isinstance(ROLE_CONFIG, dict)
-    for domain, cfg in ROLE_CONFIG.items():
+    for cfg in ROLE_CONFIG.values():
         assert "keywords" in cfg
         assert "skill_threshold" in cfg
 
 
 def test_skill_domains_have_list_values():
-    for domain, keywords in SKILL_DOMAINS.items():
+    for keywords in SKILL_DOMAINS.values():
         assert isinstance(keywords, list)
         assert len(keywords) > 0

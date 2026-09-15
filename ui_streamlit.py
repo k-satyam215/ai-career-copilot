@@ -74,8 +74,8 @@ if st.button("Evaluate Resume"):
         progress = st.progress(0, text="📄 Loading resume...")
         progress.progress(10, text="🔍 Detecting role...")
 
-        from retrieval.loader import load_resume
         from retrieval.chunking import chunk_resume
+        from retrieval.loader import load_resume
         resume_text = load_resume(resume_path)
         all_chunks = chunk_resume(resume_text)
         progress.progress(25, text="🧠 Loading embedding model (first run may take ~30s)...")
@@ -118,7 +118,7 @@ if st.button("Evaluate Resume"):
         st.subheader("✅ Final Verdict")
         st.success(result["verdict"])
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         st.error(f"❌ Error: {e}")
         with st.expander("Show full traceback"):
             st.code(traceback.format_exc())

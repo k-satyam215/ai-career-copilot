@@ -15,7 +15,7 @@ def get_model():
                 return SentenceTransformer("all-MiniLM-L6-v2")
 
             _model = _load()
-        except Exception:
+        except Exception:  # noqa: BLE001
             from sentence_transformers import SentenceTransformer
             _model = SentenceTransformer("all-MiniLM-L6-v2")
     return _model

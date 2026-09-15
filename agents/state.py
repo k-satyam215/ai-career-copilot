@@ -1,16 +1,16 @@
-from typing import List, TypedDict
+from typing import TypedDict
 
 
 class AgentState(TypedDict, total=False):
-    resume_chunks: List[str]
-    full_resume_chunks: List[str]
-    evidence_chunks: List[str]
+    resume_chunks: list[str]
+    full_resume_chunks: list[str]
+    evidence_chunks: list[str]
     jd_text: str
     role: str
     skill_score: float
     experience_score: float
-    ats_issues: List[str]
-    improvement_suggestions: List[str]
-    interview_questions: List[str]
-    interview_answers: List[str]
+    ats_issues: list[str]
+    improvement_suggestions: list[str]
+    interview_questions: list[str]
+    interview_answers: list[str]
     verdict: str

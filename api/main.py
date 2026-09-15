@@ -33,7 +33,7 @@ def health() -> dict:
 
 @app.post("/evaluate", response_model=EvaluationResponse)
 async def evaluate(
-    resume: UploadFile = File(..., description="Resume file (PDF)"),
+    resume: UploadFile = File(..., description="Resume file (PDF)"),  # noqa: B008
     jd_text: str = Form(..., description="Target job description"),
 ) -> dict:
     """Evaluate an uploaded resume PDF against a job description."""
