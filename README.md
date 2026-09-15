@@ -208,7 +208,7 @@ ai-career-copilot/
 | Variable | Default | Description |
 |---|---|---|
 | `GROQ_API_KEY` | **required** | Groq API key |
-| `GROQ_MODEL` | `llama-3.1-8b-instant` | Model ID |
+| `GROQ_MODEL` | `openai/gpt-oss-20b` | Model ID |
 | `GROQ_TEMPERATURE` | `0.3` | Sampling temperature |
 
 ---

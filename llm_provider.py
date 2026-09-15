@@ -5,7 +5,7 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
-DEFAULT_MODEL = "llama-3.1-8b-instant"
+DEFAULT_MODEL = "openai/gpt-oss-20b"
 DEFAULT_TEMPERATURE = 0.3
 
 
