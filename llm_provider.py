@@ -7,6 +7,8 @@ load_dotenv()
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 DEFAULT_TEMPERATURE = 0.3
+DEFAULT_MAX_TOKENS = 4096
+DEFAULT_REASONING_EFFORT = "low"
 
 
 def get_llm():
@@ -20,6 +22,9 @@ def get_llm():
     return ChatGroq(
         model=os.getenv("GROQ_MODEL", DEFAULT_MODEL),
         temperature=float(os.getenv("GROQ_TEMPERATURE", str(DEFAULT_TEMPERATURE))),
+        max_tokens=int(os.getenv("GROQ_MAX_TOKENS", str(DEFAULT_MAX_TOKENS))),
+        reasoning_effort=os.getenv("GROQ_REASONING_EFFORT", DEFAULT_REASONING_EFFORT),
+        max_retries=2,
         groq_api_key=api_key,
     )
 

@@ -73,14 +73,17 @@ def fill_with_fallback(questions: list) -> list:
 
 def llm_interview_agent(state):
     """Generates resume + JD grounded interview questions."""
-    llm = get_llm()
-
     role = state["role"]
     jd_text = state["jd_text"]
     resume_context = "\n".join(state["resume_chunks"][:RESUME_CONTEXT_CHUNKS])
 
-    response = llm.invoke(build_prompt(role, jd_text, resume_context))
-    questions = parse_questions(response.content)
+    try:
+        llm = get_llm()
+        response = llm.invoke(build_prompt(role, jd_text, resume_context))
+        questions = parse_questions(response.content or "")
+    except Exception:  # noqa: BLE001
+        questions = []
+
     questions = fill_with_fallback(questions)
 
     state["interview_questions"] = questions
