@@ -75,7 +75,7 @@ def improvement_agent(state):
         try:
             response = llm.invoke(build_prompt(text, jd_text))
             bullet = response.content.strip()
-        except Exception as e:  # noqa: BLE001, S112
+        except Exception as e:  # noqa: BLE001
             state.setdefault("llm_errors", []).append(
                 f"improvement_agent: {type(e).__name__}: {e}"
             )
