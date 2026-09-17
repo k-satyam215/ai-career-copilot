@@ -19,12 +19,13 @@
 
 | Concern | Approach |
 |---|---|
-| Resume scoring | Deterministic keyword-density agents (no hallucination) |
+| Resume scoring | Deterministic keyword-density agents across 10 skill domains (no hallucination) |
 | Evidence retrieval | HYDE + MMR (diversity-aware semantic search) |
 | LLM usage | Scoped to improvement bullets, interview Q&A only |
 | Role detection | JD intent + resume strength → adaptive label |
 | Freshness | Fresher-safe: no fake metrics, no fabricated experience |
-| Explainability | Each agent has a single responsibility, traceable output |
+| Explainability | Each agent has a single responsibility, traceable output — verdicts include a plain-language reason, and any LLM failure is surfaced in the UI instead of silently falling back |
+| UI | Custom dark theme with gradient hero, score cards, and a downloadable evaluation report |
 
 ---
 
@@ -140,13 +141,19 @@ Response:
 ```json
 {
   "role": "GenAI Engineer",
-  "skill_score": 70.0,
-  "experience_score": 64.0,
+  "skill_score": 100.0,
+  "experience_score": 90.0,
   "ats_issues": [],
   "improvement_suggestions": ["..."],
   "interview_questions": ["..."],
   "interview_answers": ["..."],
-  "verdict": "Interview Ready (Fresher)"
+  "verdict": "Interview Ready (Fresher)",
+  "verdict_reason": "Meets both skill and experience thresholds for this role.",
+  "skill_breakdown": {
+    "matched": ["python", "genai", "vector", "backend", "projects", "devops", "testing", "data", "ml", "security"],
+    "missing": []
+  },
+  "llm_errors": []
 }
 ```
 
@@ -168,6 +175,8 @@ Three tools exposed via `mcp_server/server.py`:
 
 ```
 ai-career-copilot/
+├── .streamlit/
+│   └── config.toml          # Dark theme (custom colors/fonts)
 ├── agents/                  # All evaluation agents
 │   ├── skill_agent.py       # Deterministic skill scoring
 │   ├── experience_agent.py  # Deterministic experience scoring
@@ -224,6 +233,10 @@ ai-career-copilot/
 **Why MMR?** Prevents redundant chunks — diverse evidence = richer context for LLM agents.
 
 **Why MCP?** Enables any LLM host (Claude Desktop, Cursor, etc.) to drive the evaluation pipeline as tool calls.
+
+**Why 10 skill domains instead of 5?** A narrow keyword set under-scores well-rounded candidates who show devops, testing, data, ML, and security skills alongside core GenAI skills — the wider domain set gives fairer, more realistic scores.
+
+**Why surface `llm_errors` instead of silently falling back?** Silent fallbacks (generic text for every question/suggestion) are worse than an explicit error — they look like a working evaluation when the LLM call actually failed. The UI now shows the real exception so failures (bad API key, deprecated model, rate limits) are diagnosable in seconds, not guessed at.
 
 ---
 
