@@ -14,3 +14,4 @@ class AgentState(TypedDict, total=False):
     interview_questions: list[str]
     interview_answers: list[str]
     verdict: str
+    llm_errors: list[str]

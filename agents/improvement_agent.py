@@ -54,9 +54,17 @@ def improvement_agent(state):
     """Generates resume-ready improvement bullets (not instructions)."""
     resume_chunks = state.get("resume_chunks", [])
     jd_text = state.get("jd_text", "")
-    llm = get_llm()
 
     suggestions = []
+
+    try:
+        llm = get_llm()
+    except Exception as e:  # noqa: BLE001
+        state.setdefault("llm_errors", []).append(
+            f"improvement_agent: {type(e).__name__}: {e}"
+        )
+        state["improvement_suggestions"] = suggestions
+        return state
 
     for chunk in resume_chunks:
         text = chunk.strip()
@@ -67,8 +75,14 @@ def improvement_agent(state):
         try:
             response = llm.invoke(build_prompt(text, jd_text))
             bullet = response.content.strip()
-        except Exception:  # noqa: BLE001, S112
-            continue
+        except Exception as e:  # noqa: BLE001, S112
+            state.setdefault("llm_errors", []).append(
+                f"improvement_agent: {type(e).__name__}: {e}"
+            )
+            # If the LLM is failing (bad key, rate limit, etc.) it will
+            # keep failing for every chunk — stop retrying immediately
+            # instead of burning time/quota on guaranteed failures.
+            break
 
         if is_valid_bullet(bullet):
             suggestions.append(bullet)

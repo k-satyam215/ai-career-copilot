@@ -90,6 +90,17 @@ if st.button("Evaluate Resume"):
         progress.progress(100, text="✅ Done!")
         progress.empty()
 
+        if result.get("llm_errors"):
+            with st.expander("⚠️ Some AI-generated sections used fallback content — click for details", expanded=True):
+                st.error(
+                    "The Groq LLM call failed, so improvement suggestions / "
+                    "interview Q&A below are generic fallback text, not "
+                    "personalized to this resume. Check GROQ_API_KEY in your "
+                    "Streamlit secrets."
+                )
+                for err in result["llm_errors"]:
+                    st.code(err)
+
         st.subheader("🧠 Evaluation Result")
         st.write("**Detected Role Profile:**", result["role"])
 

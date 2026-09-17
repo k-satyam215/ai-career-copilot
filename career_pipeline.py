@@ -96,4 +96,5 @@ def evaluate_resume(resume_path: str, jd_text: str) -> dict:
         "interview_questions": state.get("interview_questions", []),
         "interview_answers": state.get("interview_answers", []),
         "verdict": state.get("verdict", verdict),
+        "llm_errors": state.get("llm_errors", []),
     }

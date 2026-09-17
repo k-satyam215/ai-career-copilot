@@ -81,8 +81,9 @@ def llm_interview_agent(state):
         llm = get_llm()
         response = llm.invoke(build_prompt(role, jd_text, resume_context))
         questions = parse_questions(response.content or "")
-    except Exception:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         questions = []
+        state.setdefault("llm_errors", []).append(f"llm_interview_agent: {type(e).__name__}: {e}")
 
     questions = fill_with_fallback(questions)
 

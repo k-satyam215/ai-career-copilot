@@ -85,8 +85,9 @@ def llm_answer_agent(state):
         prompt = build_batch_prompt(questions, all_chunks, evidence)
         response = llm.invoke(prompt)
         answers = parse_batch_response(response.content.strip(), len(questions))
-    except Exception:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         answers = [FALLBACK_ANSWER] * len(questions)
+        state.setdefault("llm_errors", []).append(f"llm_answer_agent: {type(e).__name__}: {e}")
 
     state["interview_answers"] = answers
     return state
