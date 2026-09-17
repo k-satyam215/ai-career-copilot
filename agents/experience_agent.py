@@ -1,15 +1,28 @@
 EXPERIENCE_INDICATORS = [
     "project",
     "built",
-    "implemented",
-    "developed",
-    "designed",
+    "build",
+    "implement",
+    "develop",
+    "design",
     "system",
     "pipeline",
     "application",
+    "deploy",
+    "integrat",
+    "optimiz",
+    "deliver",
+    "engineer",
+    "automat",
+    "reduc",
+    "improv",
+    "architect",
+    "harden",
+    "orchestrat",
+    "scal",
 ]
 
-POINTS_PER_INDICATOR = 8
+POINTS_PER_INDICATOR = 6
 MAX_EXPERIENCE_SCORE = 100
 
 

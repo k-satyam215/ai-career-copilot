@@ -34,8 +34,8 @@ SKILL_DOMAINS = {
 }
 
 EVALUATION_THRESHOLDS = {
-    "skill_score": 60,
-    "experience_score": 55,
+    "skill_score": 65,
+    "experience_score": 45,
 }
 
 # Backward-compatible config shape for older pipeline code.

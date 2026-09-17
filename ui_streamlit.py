@@ -108,6 +108,20 @@ if st.button("Evaluate Resume"):
         c1.metric("Skill Score", result["skill_score"])
         c2.metric("Experience Score", result["experience_score"])
 
+        breakdown = result.get("skill_breakdown", {})
+        if breakdown.get("matched") or breakdown.get("missing"):
+            with st.expander("📊 Skill area breakdown", expanded=False):
+                if breakdown.get("matched"):
+                    st.markdown(
+                        "**Covered:** "
+                        + " ".join(f"`{g}`" for g in breakdown["matched"])
+                    )
+                if breakdown.get("missing"):
+                    st.markdown(
+                        "**Not detected:** "
+                        + " ".join(f"`{g}`" for g in breakdown["missing"])
+                    )
+
         st.subheader("📄 ATS Check")
         if result["ats_issues"]:
             for issue in result["ats_issues"]:
@@ -128,6 +142,36 @@ if st.button("Evaluate Resume"):
 
         st.subheader("✅ Final Verdict")
         st.success(result["verdict"])
+        if result.get("verdict_reason"):
+            st.caption(result["verdict_reason"])
+
+        report_lines = [
+            "AI Career Copilot — Evaluation Report",
+            f"Role: {result['role']}",
+            f"Skill Score: {result['skill_score']}",
+            f"Experience Score: {result['experience_score']}",
+            f"Verdict: {result['verdict']} — {result.get('verdict_reason', '')}",
+            "",
+            "ATS Issues:",
+            *(result["ats_issues"] or ["None"]),
+            "",
+            "Improvement Suggestions:",
+            *[f"- {s}" for s in result["improvement_suggestions"]],
+            "",
+            "Interview Questions & Answers:",
+            *[
+                f"Q{i}. {q}\nA{i}. {a}\n"
+                for i, (q, a) in enumerate(
+                    zip(result["interview_questions"], result["interview_answers"]), 1
+                )
+            ],
+        ]
+        st.download_button(
+            "📥 Download Full Report (.txt)",
+            data="\n".join(report_lines),
+            file_name="resume_evaluation_report.txt",
+            mime="text/plain",
+        )
 
     except Exception as e:  # noqa: BLE001
         st.error(f"❌ Error: {e}")

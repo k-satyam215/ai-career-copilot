@@ -12,4 +12,19 @@ def judge_agent(state):
     state["verdict"] = (
         "Interview Ready (Fresher)" if skill_ok and experience_ok else "Needs Improvement"
     )
+
+    gaps = []
+    if not skill_ok:
+        gap = EVALUATION_THRESHOLDS["skill_score"] - skill_score
+        gaps.append(f"skill score is {gap:.0f} points below the {EVALUATION_THRESHOLDS['skill_score']} threshold")
+    if not experience_ok:
+        gap = EVALUATION_THRESHOLDS["experience_score"] - experience_score
+        gaps.append(
+            f"experience score is {gap:.0f} points below the {EVALUATION_THRESHOLDS['experience_score']} threshold"
+        )
+    state["verdict_reason"] = (
+        "Meets both skill and experience thresholds for this role."
+        if not gaps
+        else "; ".join(gaps).capitalize() + "."
+    )
     return state
